@@ -1,0 +1,28 @@
+# deps
+node_modules/
+frontend/node_modules/
+indexer/node_modules/
+
+# build / artifacts
+artifacts/
+cache/
+typechain-types/
+coverage/
+coverage.json
+dist/
+.next/
+out/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# local chain / db
+*.sqlite
+pgdata/
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.log
