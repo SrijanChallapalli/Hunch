@@ -1,0 +1,39 @@
+{
+  "seed": "0xbadc0de",
+  "network": "hardhat (in-process)",
+  "markets": 8,
+  "traders": 10,
+  "targetOps": 7500,
+  "attempted": 7500,
+  "accepted": 6228,
+  "rejectedExpected": 1272,
+  "unexpectedErrors": 0,
+  "solvencyChecks": 6236,
+  "solvencyFailures": 0,
+  "byAction": {
+    "buyYes": 1132,
+    "buyNo": 1020,
+    "sellYes": 1009,
+    "sellNo": 1019,
+    "mint": 1023,
+    "merge": 1025
+  },
+  "rejections": {
+    "zeroValue": 262,
+    "noAllowance": 277,
+    "slippage": 254,
+    "wrongState": 479,
+    "closed": 0
+  },
+  "settlement": {
+    "partialRedemptions": 6,
+    "doubleClaimBlocked": 6,
+    "invalidRefunds": 2,
+    "failedReceiverBlocked": 1,
+    "closedTradeBlocked": 8,
+    "lpSettled": 8
+  },
+  "elapsedMs": 9841,
+  "opsPerSec": 762,
+  "generatedAt": "2026-10-14T23:10:15.223Z"
+}

@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "sim": "hardhat run test/simulation/run-7500.ts",
     "node": "hardhat node"
   },
   "devDependencies": {
