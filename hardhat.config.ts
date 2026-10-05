@@ -8,6 +8,9 @@ const config: HardhatUserConfig = {
       optimizer: { enabled: true, runs: 200 },
     },
   },
+  mocha: {
+    timeout: 120000, // indexer/DB tests do real Postgres round-trips
+  },
 };
 
 export default config;

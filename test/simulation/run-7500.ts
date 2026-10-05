@@ -303,7 +303,10 @@ ${Object.entries(counts.rejections).map(([k, v]) => `- ${k}: ${v}`).join("\n")}
   console.log(`OK: ${counts.attempted} ops, 0 solvency failures, 0 unexpected errors.`);
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exitCode = 1;
-});
+// Only run when invoked directly (hardhat run), not when imported by the test runner.
+if (require.main === module) {
+  main().catch((e) => {
+    console.error(e);
+    process.exitCode = 1;
+  });
+}
