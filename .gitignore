@@ -26,3 +26,7 @@ pgdata/
 .DS_Store
 Thumbs.db
 *.log
+
+# local deployments (sepolia.json is committed)
+deployments/hardhat.json
+deployments/localhost.json

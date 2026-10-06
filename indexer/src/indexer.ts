@@ -19,6 +19,9 @@ export interface ProviderLike {
   getBlock(n: number): Promise<{ hash: string | null } | null>;
 }
 
+// High-resolution wall clock (epoch ms) so samples are comparable across processes.
+export const nowMs = () => performance.timeOrigin + performance.now();
+
 const jsonBig = (o: unknown) =>
   JSON.stringify(o, (_, v) => (typeof v === "bigint" ? v.toString() : v));
 
@@ -102,33 +105,53 @@ export class Indexer {
   }
 
   /** Index a closed block range [from,to]. Safe to call repeatedly (idempotent). */
-  async syncRange(from: number, to: number): Promise<void> {
+  async syncRange(from: number, to: number): Promise<number> {
     const logs = await this.provider.getLogs({ fromBlock: from, toBlock: to });
+    // Detection = the moment the indexer first receives the eligible log from the RPC.
+    const detectAt = nowMs();
     logs.sort((a, b) => a.blockNumber - b.blockNumber || a.index - b.index);
 
     // Pass A: factory logs first so market/token addresses are known before
     // their own (same-block, earlier-logIndex) mint Transfers are processed.
     for (const log of logs) {
-      if (log.address.toLowerCase() === this.factory) await this.processLog(log);
+      if (log.address.toLowerCase() === this.factory) await this.processLog(log, detectAt);
     }
     // Pass B: everything else.
     for (const log of logs) {
-      if (log.address.toLowerCase() !== this.factory) await this.processLog(log);
+      if (log.address.toLowerCase() !== this.factory) await this.processLog(log, detectAt);
     }
 
     const toHash = (await this.provider.getBlock(to))?.hash ?? "";
     await this.setCheckpoint(to, toHash);
+    return logs.length;
   }
 
-  private async processLog(log: LogLike): Promise<void> {
-    // Detection = the moment the indexer picks up this eligible log for processing.
-    const detectAt = performance.now();
+  /**
+   * Long-running poll loop: sync, sleep `pollMs`, repeat until `shouldStop()`.
+   * Crash-safe by construction: a restarted process resumes from the checkpoint.
+   */
+  async run(pollMs: number, shouldStop: () => boolean = () => false): Promise<void> {
+    await this.init();
+    while (!shouldStop()) {
+      await this.sync();
+      if (shouldStop()) break;
+      await new Promise((r) => setTimeout(r, pollMs));
+    }
+  }
+
+  /** Last block durably processed, or null before the first range. */
+  async lastIndexedBlock(): Promise<number | null> {
+    return (await this.checkpoint())?.block ?? null;
+  }
+
+  private async processLog(log: LogLike, detectAt: number): Promise<void> {
     const addr = log.address.toLowerCase();
     const decoded = this.decode(log, addr);
     if (!decoded) return; // not one of ours
 
     const client = await this.pool.connect();
     let inserted = false;
+    let persistAt = 0;
     try {
       await client.query("BEGIN");
       const ins = await client.query(
@@ -142,6 +165,8 @@ export class Indexer {
       inserted = ins.rowCount === 1;
       if (inserted) await this.applyDerived(client, log, decoded);
       await client.query("COMMIT");
+      // Persistence = this event's DB transaction commit has returned.
+      persistAt = nowMs();
     } catch (e) {
       await client.query("ROLLBACK");
       throw e;
@@ -150,7 +175,6 @@ export class Indexer {
     }
 
     if (inserted) {
-      const persistAt = performance.now();
       await this.pool.query(
         `INSERT INTO latency_samples(chain_id,transaction_hash,log_index,detection_ms,persistence_ms,latency_ms)
          VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING`,
