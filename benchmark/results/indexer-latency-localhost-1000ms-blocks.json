@@ -1,0 +1,104 @@
+{
+  "generatedAt": "2026-10-14T23:40:00.299Z",
+  "definition": {
+    "detection": "indexer receives the eligible log (provider.getLogs returns)",
+    "persistence": "PostgreSQL COMMIT for that event's transaction returns",
+    "latency_ms": "persistence - detection, one sample per eligible log",
+    "receiptToPersisted_ms": "client receives tx receipt -> last log of that tx committed",
+    "percentile": "nearest-rank"
+  },
+  "config": {
+    "trades": 1200,
+    "rateTxPerSec": 8,
+    "blockMs": 1000,
+    "traders": 10,
+    "markets": 8,
+    "pollMs": 250,
+    "confirmations": 0,
+    "seed": 24301
+  },
+  "environment": {
+    "network": "localhost",
+    "chainId": 31337,
+    "rpc": "http://127.0.0.1:8545",
+    "postgres": "16.15",
+    "node": "v22.14.0",
+    "os": "Windows_NT 10.0.26200 x64",
+    "cpu": "Intel(R) Core(TM) Ultra 9 285K x24",
+    "memGB": 31
+  },
+  "window": {
+    "loadSeconds": 154.33,
+    "blocks": 153,
+    "txAccepted": 1200,
+    "txRejected": 0,
+    "eligibleLogs": 4800,
+    "polls": 153
+  },
+  "detectionToPersistence_ms": {
+    "count": 4800,
+    "min": 2.14,
+    "p50": 53.67,
+    "p90": 94.77,
+    "p95": 102.2,
+    "p99": 117.17,
+    "max": 140.22,
+    "mean": 54.27
+  },
+  "detectionToPersistenceByEvent_ms": {
+    "Bought": {
+      "count": 858,
+      "min": 10.6,
+      "p50": 59.78,
+      "p90": 100.07,
+      "p95": 107.58,
+      "p99": 124.07,
+      "max": 140.22,
+      "mean": 59.77
+    },
+    "Sold": {
+      "count": 342,
+      "min": 9.96,
+      "p50": 57.45,
+      "p90": 96.59,
+      "p95": 105.64,
+      "p99": 114.41,
+      "max": 138.38,
+      "mean": 57.64
+    },
+    "Transfer": {
+      "count": 3600,
+      "min": 2.14,
+      "p50": 52.49,
+      "p90": 93.25,
+      "p95": 100.65,
+      "p99": 114.68,
+      "max": 136.94,
+      "mean": 52.64
+    }
+  },
+  "receiptToPersisted_ms": {
+    "count": 1200,
+    "min": 0,
+    "p50": 161.61,
+    "p90": 272.09,
+    "p95": 293.39,
+    "p99": 340.96,
+    "max": 387.8,
+    "mean": 161.12
+  },
+  "logsPerPoll": {
+    "count": 153,
+    "min": 8,
+    "p50": 32,
+    "p90": 32,
+    "p95": 32,
+    "p99": 32,
+    "max": 32,
+    "mean": 31.37
+  },
+  "target": {
+    "p95_ms": 1800,
+    "met": true
+  }
+}
