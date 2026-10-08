@@ -9,7 +9,10 @@
     "sim": "hardhat run test/simulation/run-7500.ts",
     "node": "hardhat node",
     "indexer": "hardhat run indexer/src/run.ts",
-    "benchmark": "hardhat run benchmark/measure-indexer.ts"
+    "benchmark": "hardhat run benchmark/measure-indexer.ts",
+    "deploy": "hardhat run scripts/deploy.ts",
+    "seed": "hardhat run scripts/seed-eight-markets.ts",
+    "demo": "hardhat run scripts/demo.ts --network localhost"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
