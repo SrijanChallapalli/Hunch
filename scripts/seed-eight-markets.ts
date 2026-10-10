@@ -58,9 +58,9 @@ async function main() {
   for (const [i, mk] of markets.entries()) {
     const m = await ethers.getContractAt("PredictionMarket", mk.address);
     const t = traders[i % traders.length];
-    await (await m.connect(t).buy(true, 0n, { value: ethers.parseEther("0.05") })).wait();
-    await (await m.connect(traders[(i + 1) % traders.length]).buy(false, 0n, { value: ethers.parseEther("0.03") })).wait();
-    console.log(`  seeded trades on #${mk.id}: P(YES)=${Number(await m.priceYes()) / 1e16}%`);
+    await (await m.connect(t).buy(true, 0n, { value: ethers.parseEther((0.02 + 0.015 * i).toFixed(3)) })).wait();
+    await (await m.connect(traders[(i + 1) % traders.length]).buy(false, 0n, { value: ethers.parseEther((0.12 - 0.012 * i).toFixed(3)) })).wait();
+    console.log(`  seeded trades on #${mk.id}: P(YES)=${(Number(await m.priceYes()) / 1e16).toFixed(1)}%`);
   }
 }
 
