@@ -30,3 +30,4 @@ Thumbs.db
 # local deployments (sepolia.json is committed)
 deployments/hardhat.json
 deployments/localhost.json
+*.tsbuildinfo
