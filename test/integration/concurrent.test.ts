@@ -95,7 +95,7 @@ describe("MarketFactory — eight concurrent markets (M3)", () => {
     const tx = await markets[2].m.connect(alice).refundInvalid(inv, 0n);
     const rc = await tx.wait();
     const after = await ethers.provider.getBalance(alice.address);
-    expect(after - before + rc!.gasUsed * rc!.gasPrice).to.equal((inv * 10n ** 16n) / ONE / 2n);
+    expect(after - before + BigInt(rc!.gasUsed) * BigInt(rc!.gasPrice)).to.equal((inv * 10n ** 16n) / ONE / 2n);
 
     // settling/redeeming in markets 0 and 2 did not touch market 4's reserves
     expect(await markets[4].m.rYes()).to.equal(m4ReserveYes);

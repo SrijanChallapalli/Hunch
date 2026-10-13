@@ -95,7 +95,7 @@ async function main() {
   const { address: factoryAddr } = await deployFactory();
   say(`- MarketFactory \`${factoryAddr}\``);
   const seeded = await seedEightMarkets(factoryAddr, 3600);
-  const mk = [];
+  const mk: any[] = [];
   for (const s of seeded) {
     const m = await ethers.getContractAt("PredictionMarket", s.address);
     const yes = await ethers.getContractAt("OutcomeToken", await m.yesToken());
@@ -231,7 +231,7 @@ async function main() {
   const shares: bigint = await mk[0].yes.balanceOf(w.address);
   const b0 = await ethers.provider.getBalance(w.address);
   const rc = await (await mk[0].m.connect(w).redeem(shares)).wait();
-  const gas = rc!.gasUsed * rc!.gasPrice;
+  const gas = BigInt(rc!.gasUsed) * BigInt(rc!.gasPrice);
   const paid = (await ethers.provider.getBalance(w.address)) - b0 + gas;
   const expect = (shares * UNIT_WEI) / ONE;
   say(`- \`${short(w.address)}\` redeemed ${ethers.formatUnits(shares, 18)} YES on #${mk[0].id} for ${eth(paid)} ETH (expected ${eth(expect)}): **${paid === expect ? "exact" : "MISMATCH"}**`);
@@ -252,7 +252,7 @@ async function main() {
   }
   const rb0 = await ethers.provider.getBalance(r.address);
   const rrc = await (await mk[2].m.connect(r).refundInvalid(y, n)).wait();
-  const refunded = (await ethers.provider.getBalance(r.address)) - rb0 + rrc!.gasUsed * rrc!.gasPrice;
+  const refunded = (await ethers.provider.getBalance(r.address)) - rb0 + BigInt(rrc!.gasUsed) * BigInt(rrc!.gasPrice);
   const refundExpect = ((y + n) * UNIT_WEI) / ONE / 2n;
   say(`- INVALID #${mk[2].id}: \`${short(r.address)}\` refunded ${ethers.formatUnits(y, 18)} YES + ${ethers.formatUnits(n, 18)} NO for ${eth(refunded)} ETH (UNIT/2 per token = ${eth(refundExpect)}): **${refunded === refundExpect ? "exact" : "MISMATCH"}**`);
   try {
