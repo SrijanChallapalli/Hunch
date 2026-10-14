@@ -1,6 +1,6 @@
 # Prediction Market — Project Specification & Build Plan
 
-> **Status:** Planning / implementation tracker  
+> **Status:** M1–M9 complete (see README milestone table)  
 > **Network:** Ethereum testnet (Sepolia recommended)  
 > **Stack:** Solidity, Hardhat, TypeScript, Next.js, PostgreSQL  
 > **Purpose:** Build and understand a complete, collateral-backed, multi-market prediction platform. Treat performance numbers below as *verification targets* until measured.
@@ -328,15 +328,15 @@ prediction-market/
 
 ## 11. Milestones and definition of done
 
-- [ ] **M1 — Written financial model:** Specify issuance, payouts, pricing, LP ownership, solvency invariant and invalid refunds.
-- [ ] **M2 — Contracts:** Deploy a single market and exercise full buy/sell/close/resolve/redeem/refund lifecycle.
-- [ ] **M3 — Factory:** Create at least eight independent markets with overlapping active windows.
-- [ ] **M4 — Security suite:** All unit/integration/property tests passing, especially collateral and reentrancy.
-- [ ] **M5 — Simulation:** Reproducible >=7,500-operation report saved to repo.
-- [ ] **M6 — Indexer:** Raw event storage, position materialization, idempotency and crash recovery verified.
-- [ ] **M7 — Frontend:** All core flows usable on Ethereum testnet.
-- [ ] **M8 — Benchmark:** Run event-detection-to-persistence benchmark and report measured p50/p95, including whether <=1.8s p95 is achieved.
-- [ ] **M9 — Demo:** Seed eight markets, execute trades, restart indexer, settle market, redeem winner, demonstrate failed double redemption and invalid refund.
+- [x] **M1 — Written financial model:** Specify issuance, payouts, pricing, LP ownership, solvency invariant and invalid refunds.
+- [x] **M2 — Contracts:** Deploy a single market and exercise full buy/sell/close/resolve/redeem/refund lifecycle.
+- [x] **M3 — Factory:** Create at least eight independent markets with overlapping active windows.
+- [x] **M4 — Security suite:** All unit/integration/property tests passing, especially collateral and reentrancy.
+- [x] **M5 — Simulation:** Reproducible >=7,500-operation report saved to repo.
+- [x] **M6 — Indexer:** Raw event storage, position materialization, idempotency and crash recovery verified.
+- [x] **M7 — Frontend:** All core flows usable on Ethereum testnet.
+- [x] **M8 — Benchmark:** Run event-detection-to-persistence benchmark and report measured p50/p95, including whether <=1.8s p95 is achieved.
+- [x] **M9 — Demo:** Seed eight markets, execute trades, restart indexer, settle market, redeem winner, demonstrate failed double redemption and invalid refund.
 
 ## 12. Questions to resolve while building
 

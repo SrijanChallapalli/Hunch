@@ -1,4 +1,4 @@
-# Frontend (M7)
+# Hunch frontend (M7)
 
 A Next.js 14 (App Router) app covering every core flow: explore markets, create one,
 buy/sell YES and NO with slippage limits, resolve, redeem, refund an INVALID market,

@@ -4,7 +4,7 @@ import { WalletProvider } from "@/lib/wallet";
 import { Nav } from "@/components/Nav";
 
 export const metadata: Metadata = {
-  title: "Prediction Market",
+  title: "Hunch",
   description: "Collateral-backed binary prediction markets on Ethereum testnet",
 };
 

@@ -18,7 +18,7 @@ export function Nav() {
   return (
     <header className="nav">
       <div className="container">
-        <Link href="/" className="brand">Prediction Market</Link>
+        <Link href="/" className="brand">Hunch</Link>
         <nav className="nav-links">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className={path === l.href ? "active" : ""}>

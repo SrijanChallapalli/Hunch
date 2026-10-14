@@ -255,6 +255,5 @@ Tests must prove (spec §6):
 
 ---
 
-*Next milestone: M2 — implement `OutcomeToken`, `PredictionMarket`, `MarketFactory` and
-exercise the full buy/sell/close/resolve/redeem/refund lifecycle on a single market with
-Hardhat tests.*
+*All milestones (M1–M9) are implemented. The README milestone table links the evidence
+for each.*

@@ -37,6 +37,8 @@ docker run -d --name pm-postgres -e POSTGRES_PASSWORD=pmpass \
 
 Then `DATABASE_URL` defaults to `postgresql://postgres:pmpass@localhost:5433/prediction_market`
 (see [`.env.example`](.env.example)). Indexer tests: `npx hardhat test test/indexer/indexer.test.ts`.
+The tests truncate the database, so stop any running indexer process (same chain id 31337)
+before running them.
 Long-running process (kill and restart at will; it resumes from the checkpoint):
 `npm run indexer -- --network localhost`. Latency benchmark: `npm run benchmark`
 (see [`../benchmark`](../benchmark)).
