@@ -8,6 +8,10 @@ import {PredictionMarket} from "./PredictionMarket.sol";
 ///         market is fully isolated (own tokens, pool, collateral, state), which
 ///         is what lets many markets run concurrently with no cross-market bleed.
 contract MarketFactory {
+    /// @notice Upper bound on question length, in UTF-8 bytes. Keeps event data
+    ///         and indexer rows bounded; long-form context belongs off-chain.
+    uint256 public constant MAX_QUESTION_BYTES = 280;
+
     address[] public markets;
 
     event MarketCreated(
@@ -28,6 +32,8 @@ contract MarketFactory {
         returns (address market)
     {
         require(msg.value > 0, "need seed");
+        uint256 qLen = bytes(question).length;
+        require(qLen > 0 && qLen <= MAX_QUESTION_BYTES, "bad question");
 
         PredictionMarket m = new PredictionMarket{value: msg.value}(
             question,
