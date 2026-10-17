@@ -19,6 +19,8 @@ export const MARKET_ABI = [
   "function lpSettled() view returns (bool)",
   "function tradingOpen() view returns (bool)",
   "function priceYes() view returns (uint256)",
+  "function quoteBuy(bool isYes, uint256 ethIn) view returns (uint256)",
+  "function quoteSell(bool isYes, uint256 sharesIn) view returns (uint256)",
   "function requiredCollateral() view returns (uint256)",
   "function invariantHolds() view returns (bool)",
   "function RESOLVE_GRACE() view returns (uint256)",

@@ -101,6 +101,22 @@ contract PredictionMarket is ReentrancyGuard {
         return (rNo * ONE) / (rYes + rNo);
     }
 
+    /// @notice Shares `buy(isYes, 0)` would return for `ethIn` wei at current reserves.
+    function quoteBuy(bool isYes, uint256 ethIn) external view returns (uint256) {
+        uint256 m = (ethIn * ONE) / UNIT_WEI;
+        if (m == 0) return 0;
+        uint256 k = rYes * rNo;
+        return isYes ? (rYes + m) - k / (rNo + m) : (rNo + m) - k / (rYes + m);
+    }
+
+    /// @notice Wei `sell(isYes, sharesIn, 0)` would pay at current reserves.
+    /// @dev Reverts "insufficient liquidity" exactly when the sell would.
+    function quoteSell(bool isYes, uint256 sharesIn) external view returns (uint256) {
+        if (sharesIn == 0) return 0;
+        uint256 R = isYes ? _solveReturn(rYes, rNo, sharesIn) : _solveReturn(rNo, rYes, sharesIn);
+        return _weiFor(R);
+    }
+
     // --------------------------------------------------------------------- //
     //  Complete-set primitives                                              //
     // --------------------------------------------------------------------- //
