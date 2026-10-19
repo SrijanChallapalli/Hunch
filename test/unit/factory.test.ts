@@ -46,4 +46,18 @@ describe("MarketFactory — input validation", () => {
     const { factory, resolver, closeTime } = await deploy();
     await expect(factory.createMarket("Q?", closeTime, resolver.address)).to.be.revertedWith("need seed");
   });
+
+  it("pages through markets with getMarkets", async () => {
+    const { factory, resolver, closeTime } = await deploy();
+    for (let i = 0; i < 5; i++) {
+      await factory.createMarket(`Q${i}?`, closeTime, resolver.address, { value: ethers.parseEther("0.1") });
+    }
+    const all = await Promise.all([0, 1, 2, 3, 4].map((i) => factory.markets(i)));
+
+    expect(await factory.getMarkets(0, 2)).to.deep.equal(all.slice(0, 2));
+    expect(await factory.getMarkets(2, 2)).to.deep.equal(all.slice(2, 4));
+    expect(await factory.getMarkets(4, 10)).to.deep.equal(all.slice(4)); // clipped at the end
+    expect(await factory.getMarkets(5, 10)).to.deep.equal([]); // past the end
+    expect(await factory.getMarkets(0, 0)).to.deep.equal([]);
+  });
 });

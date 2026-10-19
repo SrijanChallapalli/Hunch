@@ -60,4 +60,16 @@ contract MarketFactory {
     function marketCount() external view returns (uint256) {
         return markets.length;
     }
+
+    /// @notice A page of market addresses, so clients can list markets without
+    ///         one RPC call per index. Out-of-range pages return an empty array.
+    function getMarkets(uint256 offset, uint256 limit) external view returns (address[] memory page) {
+        uint256 n = markets.length;
+        if (offset >= n) return new address[](0);
+        uint256 end = offset + limit > n ? n : offset + limit;
+        page = new address[](end - offset);
+        for (uint256 i = offset; i < end; i++) {
+            page[i - offset] = markets[i];
+        }
+    }
 }

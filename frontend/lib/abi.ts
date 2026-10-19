@@ -3,6 +3,7 @@ export const FACTORY_ABI = [
   "function createMarket(string question, uint64 closeTime, address resolver) payable returns (address)",
   "function marketCount() view returns (uint256)",
   "function markets(uint256) view returns (address)",
+  "function getMarkets(uint256 offset, uint256 limit) view returns (address[])",
   "event MarketCreated(uint256 indexed marketId, address market, address indexed creator, address yesToken, address noToken, string question, uint64 closeTime, address resolver)",
 ];
 
