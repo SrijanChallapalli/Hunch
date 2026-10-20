@@ -9,6 +9,10 @@ import { TxStatus } from "@/components/Status";
 
 const iface = new Interface(FACTORY_ABI);
 
+// Mirrors MarketFactory.MAX_QUESTION_BYTES; the contract counts UTF-8 bytes, not characters.
+const MAX_QUESTION_BYTES = 280;
+const utf8Bytes = (s: string) => new TextEncoder().encode(s).length;
+
 function defaultClose(): string {
   const d = new Date(Date.now() + 7 * 86400_000);
   d.setMinutes(0, 0, 0);
@@ -27,6 +31,7 @@ export default function Create() {
     if (w.account && !resolver) setResolver(w.account);
   }, [w.account, resolver]);
 
+  const questionBytes = utf8Bytes(question.trim());
   const closeTs = Math.floor(new Date(close).getTime() / 1000);
   let seedWei = 0n;
   try {
@@ -36,6 +41,7 @@ export default function Create() {
   }
   const problems = [
     !question.trim() && "Enter a question",
+    questionBytes > MAX_QUESTION_BYTES && `Question is too long (${questionBytes}/${MAX_QUESTION_BYTES} bytes)`,
     !(closeTs > Date.now() / 1000 + 60) && "Close time must be in the future",
     !isAddress(resolver) && "Resolver must be a valid address",
     !(seedWei > 0n) && "Seed liquidity must be more than 0 ETH",
@@ -74,7 +80,10 @@ export default function Create() {
         </div>
         <label>
           Question
-          <textarea value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Will … happen by …?" maxLength={200} />
+          <textarea value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Will … happen by …?" />
+          <span className={`small ${questionBytes > MAX_QUESTION_BYTES ? "no-text" : "muted"}`} style={{ textAlign: "right" }}>
+            {questionBytes}/{MAX_QUESTION_BYTES}
+          </span>
         </label>
         <label>
           Trading closes
