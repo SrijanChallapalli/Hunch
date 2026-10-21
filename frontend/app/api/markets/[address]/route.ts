@@ -7,6 +7,9 @@ export const dynamic = "force-dynamic";
 export async function GET(_req: Request, { params }: { params: { address: string } }) {
   const { chainId } = appConfig();
   const market = params.address.toLowerCase();
+  if (!/^0x[0-9a-f]{40}$/.test(market)) {
+    return NextResponse.json({ error: "market must be an address" }, { status: 400 });
+  }
   try {
     const q = (sql: string) => db().query(sql, [chainId, market]).then((r) => r.rows);
     const [trades, redemptions, holders] = await Promise.all([
