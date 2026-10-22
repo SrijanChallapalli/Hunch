@@ -65,7 +65,9 @@ export default function MarketPage({ params }: { params: { address: string } }) 
 
   useEffect(() => {
     load();
-    const t = setInterval(load, 5000);
+    const t = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, 5000);
     return () => clearInterval(t);
   }, [load, w.refreshKey]);
 

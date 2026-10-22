@@ -5,7 +5,7 @@ import { useWallet } from "./wallet";
 
 /**
  * Fetch an indexer API route and re-poll it, so views catch up with the indexer
- * after a transaction without a manual reload.
+ * after a transaction without a manual reload. Background tabs stop polling.
  */
 export function useIndexed<T>(url: string | null, pollMs = 3000) {
   const { refreshKey } = useWallet();
@@ -30,10 +30,18 @@ export function useIndexed<T>(url: string | null, pollMs = 3000) {
       }
     };
     load();
-    const t = setInterval(load, pollMs);
+    // Skip polls while the tab is hidden, and catch up as soon as it is shown again.
+    const t = setInterval(() => {
+      if (document.visibilityState === "visible") load();
+    }, pollMs);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       alive = false;
       clearInterval(t);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [url, pollMs, refreshKey]);
 
