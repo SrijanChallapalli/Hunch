@@ -20,15 +20,45 @@ interface MarketRow {
 }
 
 const FILTERS = ["All", "Open", "Settled"] as const;
+const SORTS = {
+  newest: "Newest",
+  closing: "Closing soon",
+  volume: "Most volume",
+} as const;
+type Sort = keyof typeof SORTS;
+
+function compare(sort: Sort, now: number) {
+  return (a: MarketRow, b: MarketRow) => {
+    if (sort === "volume") {
+      const d = BigInt(b.volume) - BigInt(a.volume);
+      return d > 0n ? 1 : d < 0n ? -1 : 0;
+    }
+    if (sort === "closing") {
+      // still-trading markets first, soonest deadline first; everything else after
+      const ca = Number(a.close_time);
+      const cb = Number(b.close_time);
+      const la = a.status === "OPEN" && ca > now ? 0 : 1;
+      const lb = b.status === "OPEN" && cb > now ? 0 : 1;
+      return la - lb || ca - cb;
+    }
+    return 0; // API already returns newest first
+  };
+}
 
 export default function Explore() {
   const { data, error } = useIndexed<{ indexer: { block: number } | null; markets: MarketRow[] }>("/api/markets");
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<Sort>("newest");
   const now = Date.now() / 1000;
+  const needle = query.trim().toLowerCase();
 
-  const markets = (data?.markets ?? []).filter((m) =>
-    filter === "All" ? true : filter === "Open" ? m.status === "OPEN" : m.status !== "OPEN"
-  );
+  const markets = (data?.markets ?? [])
+    .filter((m) =>
+      filter === "All" ? true : filter === "Open" ? m.status === "OPEN" : m.status !== "OPEN"
+    )
+    .filter((m) => !needle || m.question.toLowerCase().includes(needle) || m.market_address.includes(needle))
+    .sort(compare(sort, now));
 
   return (
     <div className="stack">
@@ -47,8 +77,27 @@ export default function Explore() {
         </div>
       </div>
 
+      <div className="row">
+        <input
+          type="search"
+          aria-label="Search markets"
+          placeholder="Search questions or addresses"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{ flex: 1, minWidth: 200 }}
+        />
+        <select aria-label="Sort markets" value={sort} onChange={(e) => setSort(e.target.value as Sort)} style={{ width: "auto" }}>
+          {(Object.keys(SORTS) as Sort[]).map((k) => (
+            <option key={k} value={k}>{SORTS[k]}</option>
+          ))}
+        </select>
+      </div>
+
       {error && <div className="notice err">{error}</div>}
-      {!error && data && markets.length === 0 && (
+      {!error && data && markets.length === 0 && needle && (
+        <div className="card empty">No markets match “{query.trim()}”.</div>
+      )}
+      {!error && data && markets.length === 0 && !needle && (
         <div className="card empty">
           No markets yet. <Link href="/create">Create one</Link> or run <span className="mono">npm run seed</span>.
         </div>
