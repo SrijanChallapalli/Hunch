@@ -12,13 +12,14 @@ import { ethers, network } from "hardhat";
 import { makePool, migrate } from "./db";
 import { Indexer } from "./indexer";
 import { readDeployment } from "./deployment";
+import { intEnv } from "./config";
 
-const POLL_MS = Number(process.env.POLL_MS ?? 500);
+const POLL_MS = intEnv("POLL_MS", 500, 10);
 
 async function main() {
   const dep = readDeployment(network.name);
   const factory = process.env.FACTORY_ADDRESS ?? dep?.factory;
-  const startBlock = Number(process.env.START_BLOCK ?? dep?.startBlock ?? 0);
+  const startBlock = intEnv("START_BLOCK", dep?.startBlock ?? 0);
   if (!factory) throw new Error(`no factory: run scripts/deploy.ts on ${network.name} or set FACTORY_ADDRESS`);
   const chainId = Number((await ethers.provider.getNetwork()).chainId);
 
