@@ -1,5 +1,7 @@
 # Hunch
 
+[![CI](https://github.com/SrijanChallapalli/Hunch/actions/workflows/ci.yml/badge.svg)](https://github.com/SrijanChallapalli/Hunch/actions/workflows/ci.yml)
+
 **Back your hunch with ETH.** Hunch is a prediction market on the Ethereum testnet.
 Anyone can open a YES/NO question, fund it with ETH, and let people trade on the answer.
 When the deadline passes, a resolver calls it and winners cash out.
@@ -26,6 +28,11 @@ contract ETH balance == setsOutstanding × UNIT
 Full accounting, pricing math, and the eight pre-coding decisions are in
 [`docs/decisions.md`](docs/decisions.md).
 
+The contracts also expose read-only helpers for clients: `quoteBuy` / `quoteSell` return
+exactly what a trade would pay at current reserves (tested against real trades and against
+the frontend's bigint mirror), and `MarketFactory.getMarkets(offset, limit)` pages through
+markets in one call. Questions are capped at 280 UTF-8 bytes.
+
 ## Stack
 
 Solidity · Hardhat · TypeScript · Next.js · PostgreSQL
@@ -49,7 +56,7 @@ docs/         spec, decisions (financial model), threat model, demo checklist
 | M1 | Written financial & threat model | ✅ [`decisions.md`](docs/decisions.md), [`threat-model.md`](docs/threat-model.md) |
 | M2 | Contracts: single-market full lifecycle | ✅ [`lifecycle.test.ts`](test/unit/lifecycle.test.ts) |
 | M3 | Factory: ≥8 independent concurrent markets | ✅ [`concurrent.test.ts`](test/integration/concurrent.test.ts) |
-| M4 | Security suite (unit/integration/invariant) | ✅ [`security.test.ts`](test/invariants/security.test.ts): 17 tests passing overall |
+| M4 | Security suite (unit/integration/invariant) | ✅ [`security.test.ts`](test/invariants/security.test.ts): 26 tests passing overall |
 | M5 | ≥7,500-operation simulation report | ✅ 7,500 ops, 0 solvency failures: [`simulation-report.md`](benchmark/results/simulation-report.md) |
 | M6 | Indexer: storage, idempotency, crash recovery | ✅ [`indexer/`](indexer), [`indexer.test.ts`](test/indexer/indexer.test.ts) |
 | M7 | Frontend: core flows | ✅ on a local node: [`frontend/`](frontend). Sepolia deploy needs an RPC URL + funded key |
@@ -91,6 +98,9 @@ npm run demo
 Other entry points: `npm run sim` (M5), `npm run benchmark` (M8), and
 `npm run deploy|seed|indexer -- --network localhost` + `cd frontend && npm run dev` (M7).
 See [`frontend/README.md`](frontend/README.md).
+
+CI runs the full suite, including the indexer tests against PostgreSQL 16, plus a
+frontend typecheck on every push: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Verification principle
 
