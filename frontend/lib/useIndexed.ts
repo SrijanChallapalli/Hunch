@@ -12,6 +12,13 @@ export function useIndexed<T>(url: string | null, pollMs = 3000) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Drop the previous URL's response, so e.g. switching Portfolio holders never
+  // shows the old holder's rows while the new request is in flight.
+  useEffect(() => {
+    setData(null);
+    setError(null);
+  }, [url]);
+
   useEffect(() => {
     if (!url) return;
     let alive = true;
