@@ -86,6 +86,7 @@ export default function Portfolio() {
         </label>
       </div>
 
+      {holder && !valid && <div className="notice warn">That isn&apos;t a valid address (0x followed by 40 hex characters).</div>}
       {error && <div className="notice err">{error}</div>}
 
       {valid && data && (
