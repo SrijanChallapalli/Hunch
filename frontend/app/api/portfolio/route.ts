@@ -27,9 +27,9 @@ export async function GET(req: Request) {
     ).rows;
     const settlements = (
       await db().query(
-        `SELECT r.transaction_hash, r.market_address, r.kind, r.shares::text, r.eth_amount::text, r.block_number, m.question
+        `SELECT r.transaction_hash, r.log_index, r.market_address, r.kind, r.shares::text, r.eth_amount::text, r.block_number, m.question
            FROM redemptions r JOIN markets m ON m.chain_id=r.chain_id AND m.market_address=r.market_address
-          WHERE r.chain_id=$1 AND r.holder=$2 ORDER BY r.block_number DESC`,
+          WHERE r.chain_id=$1 AND r.holder=$2 ORDER BY r.block_number DESC, r.log_index DESC`,
         [chainId, holder]
       )
     ).rows;

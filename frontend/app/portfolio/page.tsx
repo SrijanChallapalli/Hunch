@@ -21,6 +21,7 @@ interface Position {
 }
 interface Settlement {
   transaction_hash: string;
+  log_index: number;
   market_address: string;
   kind: string;
   shares: string;
@@ -139,7 +140,7 @@ export default function Portfolio() {
                 <thead><tr><th>Market</th><th>Kind</th><th>Shares</th><th>Paid</th><th>Block</th></tr></thead>
                 <tbody>
                   {data.settlements.map((s) => (
-                    <tr key={s.transaction_hash + s.kind}>
+                    <tr key={`${s.transaction_hash}-${s.log_index}`}>
                       <td><Link href={`/market/${s.market_address}`}>{s.question}</Link></td>
                       <td>{s.kind}</td>
                       <td className="num">{shares(s.shares)}</td>
