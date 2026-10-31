@@ -65,10 +65,16 @@ export default function MarketPage({ params }: { params: { address: string } }) 
 
   useEffect(() => {
     load();
-    const t = setInterval(() => {
+    // Same as useIndexed: no polls while hidden, and catch up as soon as the tab is shown.
+    const onVisible = () => {
       if (document.visibilityState === "visible") load();
-    }, 5000);
-    return () => clearInterval(t);
+    };
+    const t = setInterval(onVisible, 5000);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [load, w.refreshKey]);
 
   const { data: hist } = useIndexed<{ indexer: { block: number } | null; trades: any[]; redemptions: any[]; holders: any[] }>(
